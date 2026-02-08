@@ -10,4 +10,7 @@ router.post(
   slotController.generateSlot,
 );
 
+// Route: GET /api/v1/slots?serviceId=...&date=...
+router.get("/", SlotMiddlware.validateGetSlots, slotController.getSlots);
+
 export default router;

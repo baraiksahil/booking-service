@@ -23,6 +23,23 @@ async function generateSlot(req, res) {
   }
 }
 
+async function getSlots(req, res) {
+  try {
+    // Expected Query: /slots?serviceId=123&date=2026-02-12
+    const response = await slotService.getSlots(
+      req.query.serviceId,
+      req.query.date,
+    );
+
+    SuccessResponse.data = response;
+    return res.status(StatusCodes.OK).json(SuccessResponse);
+  } catch (error) {
+    ErrorResponse.error = error;
+    return res.status(error.statusCode).json(ErrorResponse);
+  }
+}
+
 export default {
   generateSlot,
+  getSlots,
 };

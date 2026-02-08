@@ -55,6 +55,17 @@ class SlotService {
     const response = await this.slotRepository.createMany(slots);
     return response;
   }
+
+  async getSlots(serviceId, date) {
+    if (!serviceId || !date) {
+      throw new AppError(
+        "Service ID and Date are required",
+        StatusCodes.BAD_REQUEST,
+      );
+    }
+    const slots = await this.slotRepository.findAll({ serviceId, date });
+    return slots;
+  }
 }
 
 export default SlotService;
