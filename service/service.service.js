@@ -18,6 +18,19 @@ class ServiceService {
       );
     }
   }
+
+  async getServices() {
+    try {
+      const response = await this.serviceRepository.getAll();
+      return response;
+    } catch (error) {
+      console.log(error);
+      throw new AppError(
+        "Something went wrong while fetching service.",
+        StatusCodes.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
 }
 
 export default ServiceService;
