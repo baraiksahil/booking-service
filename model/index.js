@@ -1,3 +1,4 @@
-import Service from "./service.model.js";
+import serviceModel from "./service.model.js";
+import slotModel from "./slot.model.js";
 
-export { Service };
+export { serviceModel, slotModel };

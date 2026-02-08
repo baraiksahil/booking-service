@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
+import { Enum } from "../utils/common/index.js";
 
-const ServiceSchema = new mongoose.Schema(
+const serviceSchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -9,7 +10,7 @@ const ServiceSchema = new mongoose.Schema(
     type: {
       type: String,
       required: true,
-      enum: ["Clinic", "Salon", "Consultancy"],
+      enum: Object.values(Enum.SERVICE_TYPES),
     },
     adminId: {
       type: String,
@@ -46,6 +47,6 @@ const ServiceSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-const Service = mongoose.model("Service", ServiceSchema);
+const service = mongoose.model("Service", serviceSchema);
 
-export default Service;
+export default service;

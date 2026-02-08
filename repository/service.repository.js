@@ -1,9 +1,9 @@
 import CrudRepository from "./crud.repository.js";
-import { Service } from "../model/index.js";
+import { serviceModel } from "../model/index.js";
 
 class ServiceRepository extends CrudRepository {
   constructor() {
-    super(Service);
+    super(serviceModel);
   }
 }
 
