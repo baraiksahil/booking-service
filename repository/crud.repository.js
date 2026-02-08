@@ -33,7 +33,10 @@ class CrudRepository {
   }
 
   async update(id, data) {
-    const result = await this.model.findByIdAndUpdate(id, data, { new: true });
+    const result = await this.model.findByIdAndUpdate(id, data, {
+      new: true,
+      runValidators: true, // this forces schema to validate
+    });
     if (!result) {
       throw new AppError("Unable to find the resource.", StatusCodes.NOT_FOUND);
     }

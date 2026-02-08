@@ -26,7 +26,46 @@ async function getAllService(req, res) {
   }
 }
 
+async function getService(req, res) {
+  try {
+    const response = await serviceService.getService(req.params.id);
+    SuccessResponse.data = response;
+    return res.status(StatusCodes.OK).json(SuccessResponse);
+  } catch (error) {
+    ErrorResponse.error = error;
+    return res.status(error.statusCode).json(ErrorResponse);
+  }
+}
+
+async function deleteService(req, res) {
+  try {
+    const response = await serviceService.deleteService(req.params.id);
+    SuccessResponse.data = response;
+    return res.status(StatusCodes.OK).json(SuccessResponse);
+  } catch (error) {
+    ErrorResponse.error = error;
+    return res.status(error.statusCode).json(ErrorResponse);
+  }
+}
+
+async function updateService(req, res) {
+  try {
+    const response = await serviceService.updateService(
+      req.params.id,
+      req.body,
+    );
+    SuccessResponse.data = response;
+    return res.status(StatusCodes.OK).json(SuccessResponse);
+  } catch (error) {
+    ErrorResponse.error = error;
+    return res.status(error.statusCode).json(ErrorResponse);
+  }
+}
+
 export default {
   createService,
   getAllService,
+  getService,
+  deleteService,
+  updateService,
 };
