@@ -2,6 +2,7 @@ import { StatusCodes } from "http-status-codes";
 import { ErrorResponse } from "../utils/common/index.js";
 import AppError from "../utils/error/app.error.js";
 import mongoose from "mongoose";
+import { Enum } from "../utils/common/index.js";
 
 function validateSlotGeneration(req, res, next) {
   // 1. Check Service ID
@@ -104,7 +105,44 @@ function validateGetSlots(req, res, next) {
   next();
 }
 
+function validateSlotUpdate(req, res, next) {
+  // 1. Check if ID is valid (Optional but good practice)
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    ErrorResponse.message = "Invalid Request";
+    ErrorResponse.error = new AppError(
+      ["Invalid Slot ID format"],
+      StatusCodes.BAD_REQUEST,
+    );
+    return res.status(StatusCodes.BAD_REQUEST).json(ErrorResponse);
+  }
+
+  // 2. Check if Status is present
+  if (!req.body.status) {
+    ErrorResponse.message = "Invalid Request";
+    ErrorResponse.error = new AppError(
+      ["Status is required"],
+      StatusCodes.BAD_REQUEST,
+    );
+    return res.status(StatusCodes.BAD_REQUEST).json(ErrorResponse);
+  }
+
+  // 3. Check if Status is a Valid Enum
+  // This gets all values like ["AVAILABLE", "BOOKED", "LOCKED", "CANCELLED"]
+  const allowedStatuses = Object.values(Enum.SLOT_STATUS);
+  if (!allowedStatuses.includes(req.body.status)) {
+    ErrorResponse.message = "Invalid Request";
+    ErrorResponse.error = new AppError(
+      [`Status must be one of: ${allowedStatuses.join(", ")}`],
+      StatusCodes.BAD_REQUEST,
+    );
+    return res.status(StatusCodes.BAD_REQUEST).json(ErrorResponse);
+  }
+
+  next();
+}
+
 export default {
   validateSlotGeneration,
   validateGetSlots,
+  validateSlotUpdate,
 };

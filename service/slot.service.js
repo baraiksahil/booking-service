@@ -66,6 +66,31 @@ class SlotService {
     const slots = await this.slotRepository.findAll({ serviceId, date });
     return slots;
   }
+
+  async updateSlot(slotId, status) {
+    // 1. Check if slot exists
+    const slot = await this.slotRepository.getById(slotId);
+    if (!slot) {
+      throw new AppError("Slot not found", StatusCodes.NOT_FOUND);
+    }
+
+    // 2. Prevent unlocking a booked slot
+    if (
+      slot.status === Enum.SLOT_STATUS.BOOKED &&
+      status === Enum.SLOT_STATUS.AVAILABLE
+    ) {
+      throw new AppError(
+        "Cannot unlock a booked slot. Cancel the appointment instead.",
+        StatusCodes.BAD_REQUEST,
+      );
+    }
+
+    // 3. Update the status
+    const response = await this.slotRepository.update(slotId, {
+      status: status,
+    });
+    return response;
+  }
 }
 
 export default SlotService;

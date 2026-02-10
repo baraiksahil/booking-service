@@ -13,4 +13,11 @@ router.post(
 // Route: GET /api/v1/slots?serviceId=...&date=...
 router.get("/", SlotMiddlware.validateGetSlots, slotController.getSlots);
 
+// Route: PATCH /api/v1/slots/:id
+router.patch(
+  "/:id",
+  SlotMiddlware.validateSlotUpdate,
+  slotController.toggleSlotStatus,
+);
+
 export default router;
