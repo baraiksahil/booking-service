@@ -1,5 +1,6 @@
 import CrudRepository from "./crud.repository.js";
 import { slotModel } from "../model/index.js";
+import { Enum } from "../utils/common/index.js";
 
 class SlotRepository extends CrudRepository {
   constructor() {
@@ -27,9 +28,9 @@ class SlotRepository extends CrudRepository {
     const response = await this.model.findOneAndUpdate(
       {
         _id: slotId,
-        status: "AVAILABLE", // Hardcoded enum string or use Enum.SLOT_STATUS.AVAILABLE
+        status: Enum.SLOT_STATUS.AVAILABLE,
       },
-      { status: "BOOKED" }, // Change to BOOKED
+      { status: Enum.SLOT_STATUS.BOOKED }, // Change to BOOKED
       { new: true }, // Return the updated document
     );
 
@@ -38,9 +39,12 @@ class SlotRepository extends CrudRepository {
 
   // To free a slot (Cancellation)
   async releaseSlot(slotId) {
-    const response = await this.model.findByIdAndUpdate(
-      slotId,
-      { status: "AVAILABLE" },
+    const response = await this.model.findOneAndUpdate(
+      {
+        _id: slotId,
+        status: Enum.SLOT_STATUS.BOOKED, // Safety Check: Only release if it's currently BOOKED
+      },
+      { status: Enum.SLOT_STATUS.AVAILABLE },
       { new: true },
     );
     return response;
