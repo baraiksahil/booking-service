@@ -55,6 +55,40 @@ function validateBookAppointment(req, res, next) {
   next();
 }
 
+function validateCancelAppointment(req, res, next) {
+  // 1. Check Appointment ID (from URL params)
+  if (!req.params.id) {
+    ErrorResponse.message = "Invalid Request";
+    ErrorResponse.error = new AppError(
+      ["Appointment ID is required in URL"],
+      StatusCodes.BAD_REQUEST,
+    );
+    return res.status(StatusCodes.BAD_REQUEST).json(ErrorResponse);
+  }
+
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    ErrorResponse.message = "Invalid Request";
+    ErrorResponse.error = new AppError(
+      ["Invalid Appointment ID format"],
+      StatusCodes.BAD_REQUEST,
+    );
+    return res.status(StatusCodes.BAD_REQUEST).json(ErrorResponse);
+  }
+
+  // 2. Check User ID (from Body)
+  if (!req.body.userId) {
+    ErrorResponse.message = "Invalid Request";
+    ErrorResponse.error = new AppError(
+      ["User ID is required to verify ownership"],
+      StatusCodes.BAD_REQUEST,
+    );
+    return res.status(StatusCodes.BAD_REQUEST).json(ErrorResponse);
+  }
+
+  next();
+}
+
 export default {
   validateBookAppointment,
+  validateCancelAppointment,
 };

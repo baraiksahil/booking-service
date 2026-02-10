@@ -43,6 +43,45 @@ class AppointmentService {
 
     return appointment;
   }
+
+  async cancelAppointment(appointmentId, userId) {
+    // A. Find the appointment
+    const appointment = await this.appointmentRepository.getById(appointmentId);
+
+    if (!appointment) {
+      throw new AppError("Appointment not found", StatusCodes.NOT_FOUND);
+    }
+
+    // B. Security Check: Ensure the user owns this appointment
+    // (Disable this check if an ADMIN is cancelling)
+    if (appointment.userId !== userId) {
+      throw new AppError(
+        "You are not authorized to cancel this appointment",
+        StatusCodes.UNAUTHORIZED,
+      );
+    }
+
+    // C. Check if already cancelled
+    if (appointment.status === Enum.APPOINTMENT_STATUS.CANCELLED) {
+      throw new AppError(
+        "Appointment is already cancelled",
+        StatusCodes.BAD_REQUEST,
+      );
+    }
+
+    // D. Update Appointment Status -> CANCELLED
+    const cancelledAppt = await this.appointmentRepository.update(
+      appointmentId,
+      {
+        status: Enum.APPOINTMENT_STATUS.CANCELLED,
+      },
+    );
+
+    // E. Free up the Slot (Make it AVAILABLE again)
+    await this.slotRepository.releaseSlot(appointment.slotId);
+
+    return cancelledAppt;
+  }
 }
 
 export default AppointmentService;

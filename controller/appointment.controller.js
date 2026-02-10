@@ -25,6 +25,25 @@ async function bookAppointment(req, res) {
   }
 }
 
+async function cancelAppointment(req, res) {
+  try {
+    const response = await appointmentService.cancelAppointment(
+      req.params.id,
+      req.body.userId,
+    );
+
+    SuccessResponse.data = response;
+    SuccessResponse.message = "Appointment cancelled successfully";
+    return res.status(StatusCodes.OK).json(SuccessResponse);
+  } catch (error) {
+    ErrorResponse.error = error;
+    return res
+      .status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR)
+      .json(ErrorResponse);
+  }
+}
+
 export default {
   bookAppointment,
+  cancelAppointment,
 };

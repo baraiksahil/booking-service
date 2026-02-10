@@ -11,4 +11,11 @@ router.post(
   appointmentController.bookAppointment,
 );
 
+// PATCH /api/v1/appointments/:id/cancel
+router.patch(
+  "/:id/cancel",
+  AppointmentMiddleware.validateCancelAppointment,
+  appointmentController.cancelAppointment,
+);
+
 export default router;
