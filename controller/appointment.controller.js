@@ -43,7 +43,24 @@ async function cancelAppointment(req, res) {
   }
 }
 
+async function getUserAppointments(req, res) {
+  try {
+    // Check Query Params first (Standard GET practice), then Body (Fallback)
+    const userId = req.query.userId || req.body.userId;
+
+    const response = await appointmentService.getUserAppointments(userId);
+
+    SuccessResponse.data = response;
+    return res.status(StatusCodes.OK).json(SuccessResponse);
+  } catch (error) {
+    console.log(error);
+    ErrorResponse.error = error;
+    return res.status(error.statusCode).json(ErrorResponse);
+  }
+}
+
 export default {
   bookAppointment,
   cancelAppointment,
+  getUserAppointments,
 };

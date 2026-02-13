@@ -12,28 +12,19 @@ class AppointmentService {
   async bookAppointment(data) {
     // data = { userId, serviceId, slotId }
 
-    // 1. Check if the Slot exists
-    const slot = await this.slotRepository.getById(data.slotId);
-    if (!slot) {
-      throw new AppError("Slot not found", StatusCodes.NOT_FOUND);
-    }
+    // uses the atomic method we made in the repository
+    // This tries to find an AVAILABLE slot and lock it in one single database operation.
+    const lockedSlot = await this.slotRepository.bookSlot(data.slotId);
 
-    // 2. Check availability
-    // If it is BOOKED, LOCKED, or CANCELLED, reject the request
-    if (slot.status !== Enum.SLOT_STATUS.AVAILABLE) {
+    // If it returns null, it means someone else beat us to it (or it doesn't exist)
+    if (!lockedSlot) {
       throw new AppError(
-        "Slot is already booked or unavailable",
+        "Slot is unavailable or already booked",
         StatusCodes.CONFLICT,
       );
     }
 
-    // 3. Mark the Slot as BOOKED
-    // We update the inventory first so no one else can grab it
-    await this.slotRepository.update(data.slotId, {
-      status: Enum.SLOT_STATUS.BOOKED,
-    });
-
-    // 4. Create the Appointment Ticket
+    // Now we are safe to create the ticket
     const appointment = await this.appointmentRepository.create({
       userId: data.userId,
       serviceId: data.serviceId,
@@ -81,6 +72,12 @@ class AppointmentService {
     await this.slotRepository.releaseSlot(appointment.slotId);
 
     return cancelledAppt;
+  }
+
+  async getUserAppointments(userId) {
+    const appointments =
+      await this.appointmentRepository.getUserAppointments(userId);
+    return appointments;
   }
 }
 

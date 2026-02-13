@@ -88,7 +88,24 @@ function validateCancelAppointment(req, res, next) {
   next();
 }
 
+function validateGetUserAppointments(req, res, next) {
+  // Check Query Params OR Body for userId
+  const userId = req.query.userId || req.body?.userId;
+
+  if (!userId) {
+    ErrorResponse.message = "Invalid Request";
+    ErrorResponse.error = new AppError(
+      ["User ID is required in query params (?userId=...)"],
+      StatusCodes.BAD_REQUEST,
+    );
+    return res.status(StatusCodes.BAD_REQUEST).json(ErrorResponse);
+  }
+
+  next();
+}
+
 export default {
   validateBookAppointment,
   validateCancelAppointment,
+  validateGetUserAppointments,
 };

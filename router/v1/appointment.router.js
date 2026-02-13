@@ -18,4 +18,11 @@ router.patch(
   appointmentController.cancelAppointment,
 );
 
+// Route: GET /api/v1/appointments?userId=...
+router.get(
+  "/",
+  AppointmentMiddleware.validateGetUserAppointments,
+  appointmentController.getUserAppointments,
+);
+
 export default router;
