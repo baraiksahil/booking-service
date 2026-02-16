@@ -117,3 +117,7 @@ POST,/api/v1/slots,Generate slots for a service.
 - Repository Pattern: Decoupling business logic (Service Layer) from database queries (Repository Layer).
 
 - Complex Mongoose Queries: Using .populate() to join multiple collections efficiently for the user dashboard.
+
+# Architecture
+
+![Overall-Architecture](./assets/architecture.png)
